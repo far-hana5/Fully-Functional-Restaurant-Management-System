@@ -5,6 +5,7 @@ import {
 import Main from "../Layouts/Main";
 import Home from "../Pages/Home/Home/Home";
 import React from 'react';
+import Menu from "../Pages/Menu/Menu/Menu";
  export const router = createBrowserRouter([
   {
     path: "/",
@@ -13,6 +14,10 @@ import React from 'react';
         {
         path:'/',
         element:<Home></Home>,
+        },
+        {
+          path:'menu',
+          element:<Menu></Menu>,
         }
     ]
   },
