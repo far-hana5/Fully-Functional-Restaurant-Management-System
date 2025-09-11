@@ -2,31 +2,60 @@ import React, { useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { AuthContext } from '../../Provider/AuthProvider';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import useAxiosPublic from '../../hooks/useAxiosPublic';
+import SocialLogin from '../../components/SocialLogin/SocialLogin';
 
 const SignUp = () => {
+  const axiosPublic = useAxiosPublic();
   const {
     register,
-    handleSubmit,formState: { errors } } = useForm();
+    handleSubmit, reset, formState: { errors } } = useForm();
 
-const{createUser}=useContext(AuthContext);
+  const { createUser, updateUserProfile } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const onSubmit = (data) => {
+    console.log(data)
+    createUser(data.email, data.password)
+      .then(res => {
+        const loggedUser = res.user;
+        console.log(loggedUser);
+        updateUserProfile(data.name)
+          .then(() => {
+            // console.log("profile info")
+            const userInfo = {
+              name: data.name,
+              email: data.email
+            }
+            axiosPublic.post('/users', userInfo)
+              .then(res => {
+                if (res.data.insertedId) {
+                  console.log("User added to the database");
+                  reset();
+                  Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'User created successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                  });
+                  navigate('/');
+                }
+              })
 
-  const onSubmit = (data) =>{
-console.log(data)
-createUser(data.email,data.password)
-.then(res=>{
-  const loggedUser=res.user;
-  console.log(loggedUser);
-})
+          })
+          .catch(error => console.log(error))
+      })
 
-  } 
+  }
 
 
   return (
     <>
-     <Helmet>
-                    <title>Bistro Boss|SignUp</title>
-                </Helmet>
+      <Helmet>
+        <title>Bistro Boss|SignUp</title>
+      </Helmet>
       <div className="hero bg-base-200 min-h-screen">
         <div className="hero-content flex-col lg:flex-row-reverse">
           <div className="text-center lg:text-left">
@@ -53,6 +82,7 @@ createUser(data.email,data.password)
 
             </form>
             <p><small>Already have an account? <Link to='/login'>Login</Link></small></p>
+            <SocialLogin></SocialLogin>
           </div>
         </div>
       </div>

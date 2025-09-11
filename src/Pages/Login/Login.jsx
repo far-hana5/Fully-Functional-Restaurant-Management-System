@@ -4,16 +4,17 @@ import { AuthContext } from '../../Provider/AuthProvider';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Swal from 'sweetalert2'
+import SocialLogin from '../../components/SocialLogin/SocialLogin';
 
 const Login = () => {
- 
+
   const [disable, setdisable] = useState(true);
 
   const { signIn } = useContext(AuthContext);
-const navigate=useNavigate();
-const location=useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-const from=location.state?.from?.pathname||"/";
+  const from = location.state?.from?.pathname || "/";
 
   useEffect(() => {
     loadCaptchaEnginge(6);
@@ -29,23 +30,23 @@ const from=location.state?.from?.pathname||"/";
         const user = res.user;
         console.log(user);
         Swal.fire({
-  title: "User Login successfull ",
-  showClass: {
-    popup: `
+          title: "User Login successfull ",
+          showClass: {
+            popup: `
       animate__animated
       animate__fadeInUp
       animate__faster
     `
-  },
-  hideClass: {
-    popup: `
+          },
+          hideClass: {
+            popup: `
       animate__animated
       animate__fadeOutDown
       animate__faster
     `
-  }
-});
-navigate(from,{replace:true});
+          }
+        });
+        navigate(from, { replace: true });
       })
   }
 
@@ -103,9 +104,11 @@ navigate(from,{replace:true});
               </div>
             </form>
             <p>
-              <small>
+              <small className='px-8'>
                 new Here? <Link to='/signup' > Create an account </Link>
               </small>
+              
+              <SocialLogin></SocialLogin>
             </p>
           </div>
         </div>
